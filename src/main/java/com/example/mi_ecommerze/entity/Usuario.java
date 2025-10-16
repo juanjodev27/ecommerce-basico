@@ -22,18 +22,12 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El nombre no puede estar vacio")
     private String nombre;
 
-    @NotBlank(message = "El email no puede estar vacio")
-    @Email(message = "El formato del email no es valido")
     private String email;
 
-    @NotBlank(message = "La direccion no puede estar vacia")
-    @Size(max = 500, message = "La direccion debe tener hasta 500 caracteres")
     private String direccion;
 
-    @Min(value = 18, message = "La edad debe de ser mayor a 18")
     private int edad;
 
     @CreationTimestamp
