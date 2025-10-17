@@ -1,7 +1,11 @@
 package com.example.mi_ecommerze.controller;
 
+import com.example.mi_ecommerze.dto.ProductoDTO;
 import com.example.mi_ecommerze.entity.Producto;
+import com.example.mi_ecommerze.mapper.ProductoMapper;
 import com.example.mi_ecommerze.service.ProductoService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,36 +17,43 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/productos")
+@RequiredArgsConstructor
 public class ProductoController {
 
-    @Autowired
-    private ProductoService productoService;
+    private final ProductoService productoService;
+
+    private final ProductoMapper productoMapper;
 
     @GetMapping
-    public ResponseEntity<List<Producto>> listarProductos(){
-        List<Producto> productos = productoService.listarProductos();
-        return ResponseEntity.ok(productos);
+    public ResponseEntity<List<ProductoDTO>> listarProductos(){
+        List<ProductoDTO> productoDTOS = productoService.listarProductos()
+                .stream()
+                .map(productoMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(productoDTOS);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> actualizarProductoPorId(@PathVariable Long id){
-        Optional<Producto> producto = Optional.ofNullable(productoService.obtenerProductoPorId(id));
-        return producto
-                .map(ResponseEntity::ok)
+    public ResponseEntity<ProductoDTO> obtenerProductoPorId(@PathVariable Long id){
+        Optional<Producto> productOptional = Optional.ofNullable(productoService.obtenerProductoPorId(id));
+        return productOptional
+                .map(producto -> ResponseEntity.ok(productoMapper.toDTO(producto)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Producto> guardarProducto(@RequestBody Producto producto){
+    public ResponseEntity<ProductoDTO> guardarProducto(@Valid @RequestBody ProductoDTO productoDTO){
+        Producto producto = productoMapper.toEntity(productoDTO);
         Producto productoGuardado = productoService.guardarProducto(producto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productoGuardado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productoMapper.toDTO(productoGuardado));
     }
 
     @PutMapping("/actualizar/{id}")
-    public ResponseEntity<Producto> actualizarProductoPorId(@RequestBody Producto producto, @PathVariable Long id){
-        Optional<Producto> productoActualizado = Optional.ofNullable(productoService.actualizarProducto(producto, id));
-        return productoActualizado
-                .map(ResponseEntity::ok)
+    public ResponseEntity<ProductoDTO> actualizarProductoPorId(@Valid @RequestBody ProductoDTO productoDTO, @PathVariable Long id){
+        Producto producto = productoMapper.toEntity(productoDTO);
+        Optional<Producto> productoOptional = Optional.ofNullable(productoService.actualizarProducto(producto,id));
+        return productoOptional
+                .map(p -> ResponseEntity.ok(productoMapper.toDTO(p)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -53,23 +64,32 @@ public class ProductoController {
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<List<Producto>> buscarProductoPorNombre(@RequestParam String nombre){
-        List<Producto> productos = productoService.buscarPorNombre(nombre);
+    public ResponseEntity<List<ProductoDTO>> buscarProductoPorNombre(@RequestParam String nombre){
+        List<ProductoDTO> productos = productoService.buscarPorNombre(nombre)
+                .stream()
+                .map(productoMapper::toDTO)
+                .toList();
         return ResponseEntity.ok(productos);
 
     }
 
     @GetMapping("/categoria/{categoriaId}")
-    public ResponseEntity<List<Producto>> buscarProductoPorCategoria(@PathVariable Long categoriaId){
-        List<Producto> productos = productoService.buscarPorCategoria(categoriaId);
+    public ResponseEntity<List<ProductoDTO>> buscarProductoPorCategoria(@PathVariable Long categoriaId){
+        List<ProductoDTO> productos = productoService.buscarPorCategoria(categoriaId)
+                .stream()
+                .map(productoMapper::toDTO)
+                .toList();
         return ResponseEntity.ok(productos);
     }
 
     @GetMapping("/filtrar")
-    public ResponseEntity<List<Producto>> filtrarPorRangoDePrecio(@RequestParam BigDecimal min,
+    public ResponseEntity<List<ProductoDTO>> filtrarPorRangoDePrecio(@RequestParam BigDecimal min,
                                                                   @RequestParam BigDecimal max){
-        List<Producto> productos = productoService.filtrarPorRangoDePrecio(min,max);
-        return ResponseEntity.ok(productos);
+        List<ProductoDTO> productosDTO= productoService.filtrarPorRangoDePrecio(min,max)
+                .stream()
+                .map(productoMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(productosDTO);
     }
 
     @PutMapping("/{productoId}/disminuir-stock")

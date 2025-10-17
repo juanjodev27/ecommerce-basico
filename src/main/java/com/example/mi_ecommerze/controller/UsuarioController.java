@@ -48,7 +48,7 @@ public class UsuarioController {
     @PutMapping("/actualizar/{id}")
     public ResponseEntity<UsuarioDTO> actualizarUsuarioPorId(@RequestBody UsuarioDTO usuarioDTO, @PathVariable Long id){
         Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
-       Optional<Usuario> optionalUsuario = Optional.ofNullable(usuarioService.actualizarUsuario(usuario,id));
+        Optional<Usuario> optionalUsuario = Optional.ofNullable(usuarioService.actualizarUsuario(usuario,id));
        return optionalUsuario
                .map(u -> ResponseEntity.ok(UsuarioMapper.toDto(u)))
                .orElseGet(() -> ResponseEntity.notFound().build());

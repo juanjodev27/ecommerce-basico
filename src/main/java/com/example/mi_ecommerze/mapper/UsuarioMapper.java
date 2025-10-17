@@ -1,6 +1,7 @@
 package com.example.mi_ecommerze.mapper;
 
 import com.example.mi_ecommerze.dto.UsuarioDTO;
+import com.example.mi_ecommerze.entity.Categoria;
 import com.example.mi_ecommerze.entity.Usuario;
 import org.springframework.stereotype.Component;
 
