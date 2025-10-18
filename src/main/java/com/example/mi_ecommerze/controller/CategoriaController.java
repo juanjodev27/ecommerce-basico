@@ -1,7 +1,10 @@
 package com.example.mi_ecommerze.controller;
 
+import com.example.mi_ecommerze.dto.CategoriaDTO;
 import com.example.mi_ecommerze.entity.Categoria;
+import com.example.mi_ecommerze.mapper.CategoriaMapper;
 import com.example.mi_ecommerze.service.CategoriaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,32 +20,39 @@ public class CategoriaController {
     @Autowired
     private CategoriaService categoriaService;
 
+    @Autowired
+    private CategoriaMapper categoriaMapper;
+
     @GetMapping
-    public ResponseEntity<List<Categoria>> listarCategoria(){
-        List<Categoria> categorias = categoriaService.listarCategorias();
+    public ResponseEntity<List<CategoriaDTO>> listarCategoria(){
+        List<CategoriaDTO> categorias = categoriaService.listarCategorias()
+                .stream()
+                .map(categoriaMapper::toDTO)
+                .toList();
         return ResponseEntity.ok(categorias);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> obtenerCategoriaPorId(@PathVariable Long id){
+    public ResponseEntity<CategoriaDTO> obtenerCategoriaPorId(@PathVariable Long id){
         Optional<Categoria> categoriaOptional = Optional.ofNullable(categoriaService.obtenerCategoriaPorId(id));
         return categoriaOptional
-                .map(ResponseEntity::ok)
+                .map(categoria -> ResponseEntity.ok(categoriaMapper.toDTO(categoria)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Categoria> crearCategoria(@RequestBody Categoria categoria){
+    public ResponseEntity<CategoriaDTO> crearCategoria(@Valid @RequestBody CategoriaDTO categoriaDTO){
+        Categoria categoria = categoriaMapper.toEntity(categoriaDTO);
         Categoria categoriaGuardado = categoriaService.crearCategoria(categoria);
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoriaGuardado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoriaMapper.toDTO(categoriaGuardado));
     }
 
     @PutMapping("/actualizar/{id}")
-    public ResponseEntity<Categoria> actualizarCategoriaPorId(@RequestBody Categoria categoria,
-                                                              @PathVariable Long id){
+    public ResponseEntity<CategoriaDTO> actualizarCategoriaPorId(@Valid @RequestBody CategoriaDTO categoriaDTO, @PathVariable Long id){
+        Categoria categoria = categoriaMapper.toEntity(categoriaDTO);
         Optional<Categoria> categoriaActualizado = Optional.ofNullable(categoriaService.actualizarCategoria(categoria, id));
         return categoriaActualizado
-                .map(ResponseEntity::ok)
+                .map(categoria1 -> ResponseEntity.ok(categoriaMapper.toDTO(categoria1)))
                 .orElseGet(()-> ResponseEntity.notFound().build());
     }
 
