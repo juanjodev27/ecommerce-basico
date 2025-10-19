@@ -1,8 +1,10 @@
 package com.example.mi_ecommerze.controller;
 
 import com.example.mi_ecommerze.dto.CategoriaDTO;
+import com.example.mi_ecommerze.dto.CategoriaSimpleDTO;
 import com.example.mi_ecommerze.entity.Categoria;
 import com.example.mi_ecommerze.mapper.CategoriaMapper;
+import com.example.mi_ecommerze.mapper.CategoriaSimpleDTOMapper;
 import com.example.mi_ecommerze.service.CategoriaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +25,23 @@ public class CategoriaController {
     @Autowired
     private CategoriaMapper categoriaMapper;
 
+    @Autowired
+    private CategoriaSimpleDTOMapper simpleDTOMapper;
+
     @GetMapping
-    public ResponseEntity<List<CategoriaDTO>> listarCategoria(){
-        List<CategoriaDTO> categorias = categoriaService.listarCategorias()
+    public ResponseEntity<List<CategoriaSimpleDTO>> listarCategoria(){
+        List<CategoriaSimpleDTO> categorias = categoriaService.listarCategorias()
                 .stream()
-                .map(categoriaMapper::toDTO)
+                .map(simpleDTOMapper::toSimpleDTO)
                 .toList();
         return ResponseEntity.ok(categorias);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaDTO> obtenerCategoriaPorId(@PathVariable Long id){
+    public ResponseEntity<CategoriaSimpleDTO> obtenerCategoriaPorId(@PathVariable Long id){
         Optional<Categoria> categoriaOptional = Optional.ofNullable(categoriaService.obtenerCategoriaPorId(id));
         return categoriaOptional
-                .map(categoria -> ResponseEntity.ok(categoriaMapper.toDTO(categoria)))
+                .map(categoria -> ResponseEntity.ok(simpleDTOMapper.toSimpleDTO(categoria)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

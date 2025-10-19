@@ -1,9 +1,12 @@
 package com.example.mi_ecommerze.controller;
 
 import com.example.mi_ecommerze.dto.ProductoDTO;
+import com.example.mi_ecommerze.dto.ProductoSimpleDTO;
 import com.example.mi_ecommerze.entity.Producto;
 import com.example.mi_ecommerze.mapper.ProductoMapper;
+import com.example.mi_ecommerze.mapper.ProductoSimpleDTOMapper;
 import com.example.mi_ecommerze.service.ProductoService;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,20 +27,22 @@ public class ProductoController {
 
     private final ProductoMapper productoMapper;
 
+    private final ProductoSimpleDTOMapper simpleDTOMapper;
+
     @GetMapping
-    public ResponseEntity<List<ProductoDTO>> listarProductos(){
-        List<ProductoDTO> productoDTOS = productoService.listarProductos()
+    public ResponseEntity<List<ProductoSimpleDTO>> listarProductos(){
+        List<ProductoSimpleDTO> productoDTOS = productoService.listarProductos()
                 .stream()
-                .map(productoMapper::toDTO)
+                .map(simpleDTOMapper::toSimpleDTO)
                 .toList();
         return ResponseEntity.ok(productoDTOS);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductoDTO> obtenerProductoPorId(@PathVariable Long id){
+    public ResponseEntity<ProductoSimpleDTO> obtenerProductoPorId(@PathVariable Long id){
         Optional<Producto> productOptional = Optional.ofNullable(productoService.obtenerProductoPorId(id));
         return productOptional
-                .map(producto -> ResponseEntity.ok(productoMapper.toDTO(producto)))
+                .map(producto -> ResponseEntity.ok(simpleDTOMapper.toSimpleDTO(producto)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -64,30 +69,30 @@ public class ProductoController {
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<List<ProductoDTO>> buscarProductoPorNombre(@RequestParam String nombre){
-        List<ProductoDTO> productos = productoService.buscarPorNombre(nombre)
+    public ResponseEntity<List<ProductoSimpleDTO>> buscarProductoPorNombre(@RequestParam String nombre){
+        List<ProductoSimpleDTO> productos = productoService.buscarPorNombre(nombre)
                 .stream()
-                .map(productoMapper::toDTO)
+                .map(simpleDTOMapper::toSimpleDTO)
                 .toList();
         return ResponseEntity.ok(productos);
 
     }
 
     @GetMapping("/categoria/{categoriaId}")
-    public ResponseEntity<List<ProductoDTO>> buscarProductoPorCategoria(@PathVariable Long categoriaId){
-        List<ProductoDTO> productos = productoService.buscarPorCategoria(categoriaId)
+    public ResponseEntity<List<ProductoSimpleDTO>> buscarProductoPorCategoria(@PathVariable Long categoriaId){
+        List<ProductoSimpleDTO> productos = productoService.buscarPorCategoria(categoriaId)
                 .stream()
-                .map(productoMapper::toDTO)
+                .map(simpleDTOMapper::toSimpleDTO)
                 .toList();
         return ResponseEntity.ok(productos);
     }
 
     @GetMapping("/filtrar")
-    public ResponseEntity<List<ProductoDTO>> filtrarPorRangoDePrecio(@RequestParam BigDecimal min,
+    public ResponseEntity<List<ProductoSimpleDTO>> filtrarPorRangoDePrecio(@RequestParam BigDecimal min,
                                                                   @RequestParam BigDecimal max){
-        List<ProductoDTO> productosDTO= productoService.filtrarPorRangoDePrecio(min,max)
+        List<ProductoSimpleDTO> productosDTO= productoService.filtrarPorRangoDePrecio(min,max)
                 .stream()
-                .map(productoMapper::toDTO)
+                .map(simpleDTOMapper::toSimpleDTO)
                 .toList();
         return ResponseEntity.ok(productosDTO);
     }
