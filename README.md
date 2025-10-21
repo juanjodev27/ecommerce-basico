@@ -1,92 +1,152 @@
-# E-commerce Básico
+# 🛒 E-commerce Básico
 
-## Descripción
-E-commerce Básico es un proyecto desarrollado en **Java Spring Boot** que permite gestionar un sistema de venta de productos en línea. La aplicación incluye funcionalidades de gestión 
-de usuarios, productos, categorías, carritos de compras y pedidos.  
+Este es un proyecto de e-commerce backend desarrollado con **Java Spring Boot**, que permite gestionar **usuarios, productos, categorías, carritos de compras y pedidos**.
 
-El proyecto está diseñado con una **arquitectura en capas**, siguiendo buenas prácticas de desarrollo y permitiendo fácil escalabilidad.  
+El objetivo del proyecto es aprender y aplicar buenas prácticas de desarrollo backend, arquitectura en capas, documentación de APIs y despliegue con Docker.
 
 ---
 
-## Tecnologías utilizadas
-- **Lenguaje:** Java 24  
-- **Framework:** Spring Boot  
-- **Base de datos:** PostgreSQL  
-- **Dependencias:** Spring Web, Spring Data JPA, Lombok, Validation   
-- **Control de versiones:** Git / GitHub  
+## 🚀 Características principales
+
+- CRUD de **usuarios, productos y categorías**
+- Gestión de **carrito de compras por usuario**
+- Gestión de **pedidos y estados**
+- Documentación automática con **Swagger**
+- Dockerización completa con `Dockerfile` y `docker-compose.yml`
+- Arquitectura en capas (`Controller`, `Service`, `Repository`, `DTO`, `Mapper`)
+- Base de datos **PostgreSQL**
 
 ---
 
-## Funcionalidades
+## 🧰 Tecnologías utilizadas
 
-### Usuarios
-- Listar todos los usuarios: `GET /api/usuarios`  
-- Obtener usuario por ID: `GET /api/usuarios/{id}`  
-- Crear usuario: `POST /api/usuarios/crear`  
-- Actualizar usuario por ID: `PUT /api/usuarios/actualizar/{id}`  
-- Eliminar usuario: `DELETE /api/usuarios/borrar/{id}`  
-
-### Productos
-- Listar todos los productos: `GET /api/productos`  
-- Obtener producto por ID: `GET /api/productos/{id}`  
-- Crear producto: `POST /api/productos/crear`  
-- Actualizar producto por ID: `PUT /api/productos/actualizar/{id}`  
-- Eliminar producto: `DELETE /api/productos/borrar/{id}`  
-- Buscar producto por nombre: `GET /api/productos/buscar?nombre=ejemplo`  
-- Buscar producto por categoría: `GET /api/productos/categoria/{categoriaId}`  
-- Filtrar productos por rango de precio: `GET /api/productos/filtrar?min=10&max=50`  
-- Disminuir stock: `PUT /api/productos/{productoId}/disminuir-stock?cantidad=5`  
-- Aumentar stock: `PUT /api/productos/{productoId}/aumentar-stock?cantidad=5`  
-- Verificar disponibilidad de stock: `GET /api/productos/{productoId}/hay-stock?cantidad=5`  
-
-### Categorías
-- Listar todas las categorías: `GET /api/categorias`  
-- Obtener categoría por ID: `GET /api/categorias/{id}`  
-- Crear categoría: `POST /api/categorias/crear`  
-- Actualizar categoría: `PUT /api/categorias/actualizar/{id}`  
-- Eliminar categoría: `DELETE /api/categorias/eliminar/{id}`  
-
-### Carrito de compras
-- Agregar producto al carrito: `GET /api/carritos/{usuarioId}/agregar/{productoId}?cantidad=1`  
-- Eliminar producto del carrito: `DELETE /api/carritos/{usuarioId}/eliminar/{productoId}`  
-- Obtener carrito por usuario: `GET /api/carritos/{usuarioId}`  
-- Vaciar carrito: `DELETE /api/carritos/{usuarioId}/vaciar`  
-
-### Pedidos
-- Crear pedido: `POST /api/pedidos/{usuarioId}?direccionEnvio=Dirección`  
-- Obtener pedidos por usuario: `GET /api/pedidos/usuario/{usuarioId}`  
-- Obtener pedido por ID: `GET /api/pedidos/{pedidoId}`  
-- Actualizar estado de pedido: `PUT /api/pedidos/{pedidoId}/estado?nuevoEstado=ESTADO`  
-  > Los estados posibles se definen en la entidad `Pedido.EstadoPedido`.  
+| Herramienta      | Descripción                     |
+|------------------|---------------------------------|
+| Java             | Versión 17 o superior           |
+| Spring Boot      | Backend API REST                |
+| PostgreSQL       | Base de datos relacional        |
+| Docker           | Contenedores                    |
+| Docker Compose   | Orquestación de servicios       |
+| Swagger/OpenAPI  | Documentación interactiva       |
+| Lombok           | Reducción de boilerplate code   |
+| Maven            | Gestión de dependencias         |
 
 ---
 
-## Instalación y ejecución
+## ⚙️ Instalación y ejecución
 
-1. Clonar el repositorio:
+### 🔧 1. Clonar el repositorio
 
 ```bash
 git clone https://github.com/juanjodev27/ecommerce-basico.git
 cd ecommerce-basico
 
-2. Configurar la base de datos en application.properties o application.yml:
+### 2. Ejecutar con Docker (recomendado)
 
-spring.datasource.url=jdbc:postgresql://localhost:5432/ecommerce
-spring.datasource.username=tu_usuario
-spring.datasource.password=tu_contraseña
+Esto construye el backend + base de datos y los levanta automáticamente
+docker compose up --build
+
+Una vez levantado, la API estará disponible en: http://localhost:8080
+Y la documentación Swagger en: http://localhost:8080/swagger-ui/index.html
+
+### ⚙️  3. Configuración manual (sin Docker)
+
+Si querés correrlo sin Docker:
+
+1) Crea una base de datos PostgreSQL llamada mi_ecommerze_db
+
+2) Configurá src/main/resources/application.properties:
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/mi_ecommerze_db
+spring.datasource.username=TU_USUARIO
+spring.datasource.password=TU_CONTRASEÑA
 spring.jpa.hibernate.ddl-auto=update
 
-3.Ejecutar la aplicación:
+Ejecutá: mvn spring-boot:run
 
-mvn spring-boot:run
+📦 Endpoints principales
 
-4. La API estará disponible en http://localhost:8080/api/...
+✅ Usuarios
 
-Contacto
-Autor: Juan José Garcete
+-GET /api/usuarios
 
-Estado del proyecto
-Funcional: ✅
-Desarrollo de frontend pendiente (opcional)
-Documentación con Swagger pendiente (opcional)
+-POST /api/usuarios/crear
 
+-PUT /api/usuarios/actualizar/{id}
+
+-DELETE /api/usuarios/borrar/{id}
+
+✅ Productos
+
+-GET /api/productos
+
+-GET /api/productos/{id}
+
+-POST /api/productos/crear
+
+-PUT /api/productos/actualizar/{id}
+
+-DELETE /api/productos/borrar/{id}
+
+-Búsqueda y filtrado: GET /api/productos/buscar, filtrar, categoria/{id}, etc.
+
+✅ Categorías
+
+-GET /api/categorias
+
+-POST /api/categorias/crear
+
+-PUT /api/categorias/actualizar/{id}
+
+-DELETE /api/categorias/eliminar/{id}
+
+🛒 Carrito de compras
+
+-GET /api/carritos/{usuarioId}
+
+-GET /api/carritos/{usuarioId}/agregar/{productoId}?cantidad=1
+
+-DELETE /api/carritos/{usuarioId}/eliminar/{productoId}
+
+-DELETE /api/carritos/{usuarioId}/vaciar
+
+📦 Pedidos
+
+-POST /api/pedidos/{usuarioId}?direccionEnvio=...
+
+-GET /api/pedidos/usuario/{usuarioId}
+
+-PUT /api/pedidos/{pedidoId}/estado?nuevoEstado=ENVIADO
+
+📁 Estructura del proyecto
+
+ecommerce-basico/
+├── src/
+│   ├── controller/
+│   ├── service/
+│   ├── entity/
+│   ├── repository/
+│   ├── dto/
+│   └── mapper/
+├── Dockerfile
+├── docker-compose.yml
+├── .env
+├── pom.xml
+└── README.md
+
+📌 Estado del proyecto
+
+Componente	Estado
+Backend API	✅ Completado
+Swagger Docs	✅ Integrado
+Docker Support	✅ Listo
+Frontend	🔜 Pendiente (opcional)
+
+
+👨‍💻 Autor
+
+Juan José Garcete
+
+📝 Licencia
+
+Este proyecto es de uso educativo y libre. ¡Usalo como base para tus propios desarrollos!
